@@ -1,0 +1,9 @@
+{
+  "name": "verstka-player",
+  "version": "0.0.10",
+  "description": "",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "author": "",
+  "license": "MIT"
+}
