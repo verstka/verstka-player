@@ -1,7 +1,7 @@
 # verstka-player
 
 ## Отображение статей
-Вставьте HTML-код статьи в любой контейне и вызовите метод `enable()`:
+Вставьте HTML-код статьи в любой контейнер и вызовите метод `enable()`:
 ```js
 import verstkaPlayer from 'verstka-player'
 
