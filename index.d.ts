@@ -1,60 +1,94 @@
-declare namespace VerstkaPlayerNS {
-  interface ArticleOptions {
-    article_selector?: string;
-    observe_selector?: string;
-  }
+/**
+ * Type definitions for verstka-player
+ */
 
-  type Constructor<T> = (element: Element, options?: any) => T;
-  type Destructor<T> = (element: Element, data: T, options?: any) => void;
-
-  interface Collection<T> {
-    setConstructor(fn: Constructor<T>): this;
-    setDestructor(fn: Destructor<T>): this;
-    getLength(): number;
-    getElements(): Element[];
-    each(iterator: (element: Element, data: T, index: number, length: number) => boolean | void): this;
-    index(element: Element): number;
-    has(element: Element): boolean;
-    add(element: Element, options?: any): boolean;
-    remove(element: Element): boolean;
-    addFew(elements: Element[], options?: any): this;
-    removeFew(elements: Element[]): this;
-    merge(selector: string, options?: any): this;
-    scatter(selector: string): this;
-    clear(): this;
-    filter(filter: (element: Element, data: T, index: number, length: number) => boolean): this;
-    refresh(): this;
-  }
+interface JQuery {
+  get(index: number): HTMLElement;
+  each(callback: (index: number, element: HTMLElement) => void): JQuery;
+  offset(): { top: number; left: number };
+  parents(selector: string): JQuery;
+  find(selector: string): JQuery;
+  not(selector: string): JQuery;
+  filter(filter: (index: number, element: HTMLElement) => boolean): JQuery;
+  attr(attributeName: string, value: string | number): JQuery;
+  removeAttr(attributeName: string): JQuery;
+  animate(properties: any, duration?: number): JQuery;
+  promise(): JQueryPromise<any>;
+  height(): number;
+  resize(): void;
 }
 
-declare class Article {
-  slideDown(params: { element: HTMLElement, height: number, duration?: number, callback?: () => void }): void;
-  slideReset(params: { duration?: number, callback?: () => void }): void;
-  resizeObject(params: { element: HTMLElement, height: number, duration?: number, callback?: () => void }): void;
-  changeDisplayMode(modeName: string): void;
-  clearCache(): void;
-  enable(options?: VerstkaPlayerNS.ArticleOptions): void;
-  refresh(): void;
-  disable(): void;
+interface JQueryPromise<T> {
+  done(callback: (...args: any[]) => any): JQueryPromise<T>;
 }
 
-declare class View {
-  items: Record<string, any>;
-  formViewKey(version: string, client: string): string;
-  add(version: string, client: string, content: any): void;
-  get(version: string, client: string): any;
-  use(version: string, client: string, callback: (view: any) => void): void;
-}
-
-declare class VerstkaPlayer {
-  View: View;
-  Article: Article;
-  is_ready: boolean;
+declare const VerstkaPlayer: {
+  /**
+   * Include external JavaScript
+   */
   includeScript(src: string, callback: () => void): void;
-  includeStyle(src: string, callback: () => void): void;
-  init(): void;
-}
 
-declare const verstkaPlayer: VerstkaPlayer;
-export = verstkaPlayer;
-export as namespace VerstkaPlayer;
+  /**
+   * Include external CSS
+   */
+  includeStyle(src: string, callback: () => void): void;
+
+  /**
+   * View management
+   */
+  View: {
+    items: Record<string, any>;
+    formViewKey(v: string, c: string): string;
+    add(v: string, c: string, content: any): void;
+    get(v: string, c: string): any;
+    use(version: string, client: string, callback: (view: any) => void): void;
+  };
+
+  /**
+   * Article management
+   */
+  Article: {
+    slideDown(params: {
+      element: HTMLElement | JQuery;
+      height: number;
+      duration?: number;
+      callback?: () => void;
+    }): void;
+    
+    slideReset(params: {
+      duration?: number;
+      callback?: () => void;
+    }): void;
+    
+    resizeObject(params: {
+      element: HTMLElement | JQuery;
+      height: number;
+      duration?: number;
+      callback?: () => void;
+    }): void;
+    
+    changeDisplayMode(mode_name: string): void;
+    clearCache(): void;
+    
+    enable(options?: {
+      article_selector?: string;
+      observe_selector?: string;
+      [key: string]: any;
+    }): void;
+    
+    refresh(): void;
+    disable(): void;
+  };
+
+  /**
+   * Initialize the VerstkaPlayer
+   */
+  init(): void;
+
+  /**
+   * Indicates if VerstkaPlayer is ready
+   */
+  is_ready: boolean;
+};
+
+export default VerstkaPlayer;
