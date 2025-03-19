@@ -1,216 +1,199 @@
-// ( function( window ) {
-	/**/
+const CACHE_TAG = 'npm';
 
-	var CACHE_TAG = 'npm';
+let resizeObserver = null;
 
-	var appendCriticalCss = function () {
-		var critical_css = '[data-vms-version="1"] [class~=object][data-type="background"],[data-vms-version="1"] [class~=object] [class~=data],[data-vms-version="1"].body--desktop [data-devices-mode="mobile"],[data-vms-version="1"] [class~=object][data-type="embed"] xmp{display:none;}.vms_article_parent.article_background-size--cover{background-size:cover;}[data-vms-version="1"] [class~=object][data-type="colorchanger"]{pointer-events:none !important;}[class~=vms_article_parent],[data-vms-version="1"] .object .content{position:relative;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{width:50%;}.vms_article_parent.article_background-size--cover{background-position:center center;}[data-type="slider"] [class~=slider] [class~=fotorama__arr],[data-vms-version="1"] [class~=object][data-type="ajpg"] [class~=content],[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link],[data-vms-version="1"] .object .content{height:100%;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link],[data-vms-version="1"] .object .content,[data-vms-version="1"] [class~=object][data-type="media"] [class~=content],[data-vms-version="1"] [class~=object][data-type="text"] [class~=content],[data-vms-version="1"] [class~=object][data-type="slider"] img,[class~=vms_article_parent],[data-vms-version="1"] [class~=object][data-type="image"] img,[data-vms-version="1"] .object[data-type="embed"] .content{width:100%;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{top:0;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link],[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile] [class~=content]{position:absolute;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link]{z-index:10;}[data-vms-version="1"],[class~=vms_article_parent]{margin-left:auto;}[data-vms-version="1"] [class~=object][data-type="slider"] img,[data-vms-version="1"] [class~=object][data-type="image"] img{display:block;}.vms_article_parent.article_background-size--tile{background-size:auto;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{background-image:none !important;}.vms_article_parent.article_background-size--tile{background-repeat:repeat;}[data-vms-version="1"] [class~=object][data-type="slider"] img,[data-vms-version="1"] [class~=object][data-type="image"] img{font-size:0;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{opacity:1 !important;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link]{left:0in;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link]{top:0pc;}.vms_article_parent.article_background-size--tile{background-position:center;}[class~=vms_article_parent]{margin-bottom:0pt;}[class~=vms_article_parent],[data-vms-version="1"]{margin-right:auto;}[data-vms-version="1"] .object--mobile[data-devices-mode="both"][data-type="text"] br{display:none !important;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"][class~=body--wide]{width:100% !important;}[data-vms-version="1"][class~=body--mobile]{padding-left:11.25pt !important;}[data-vms-version="1"][class~=body--mobile]{padding-bottom:11.25pt !important;}[data-vms-version="1"][class~=body--mobile]{padding-right:11.25pt !important;}[data-vms-version="1"] .object[data-type="embed"] .content,[data-vms-version="1"] .object .content{z-index:2;}[class~=vms_article_parent]{margin-top:0pt;}[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile]{height:0in !important;}[class~=vms_article_parent]{z-index:1;}[data-vms-version="1"][class~=body--mobile]{padding-top:11.25pt !important;}[data-vms-version="1"] .object .content,[class~=vms_article_parent]{overflow:hidden;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"] [class~=object][data-type="text"],[data-vms-version="1"] .object .content{-webkit-box-sizing:border-box;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"] [class~=object][data-type="text"],[data-vms-version="1"] .object .content{-moz-box-sizing:border-box;}[data-vms-version="1"] [class~=object][data-type="text"] [class~=content],[data-vms-version="1"] .object[data-type="embed"] .content,[data-vms-version="1"] [class~=object][data-type="media"] [class~=content],[data-vms-version="1"] [class~=object][data-type="text"] [class~=editor]{height:100%;}[data-vms-version="1"],[data-vms-version="1"] .object[data-type="embed"] .content{position:relative;}[data-vms-version="1"][class~=body--mobile]{margin-left:0 !important;}[data-vms-version="1"][class~=body--mobile]{margin-bottom:0 !important;}[data-vms-version="1"] .object .content,[data-vms-version="1"] [class~=object][data-type="text"],[data-vms-version="1"][class~=body--mobile]{box-sizing:border-box;}[data-vms-version="1"][class~=body--mobile]{margin-right:0 !important;}[data-vms-version="1"] [class~=object][class~=hide]{opacity:0;}[data-vms-version="1"][class~=body--mobile]{margin-top:0 !important;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"] [class~=object--mobile]:not([data-type="button"]){height:auto !important;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-left:0 !important;}[data-vms-version="1"]{margin-bottom:0;}[data-vms-version="1"] [class~=object][data-type="shape"] [class~=content]{background:#000;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-bottom:0 !important;}[data-vms-version="1"]{margin-top:0;}[data-vms-version="1"]{-webkit-text-size-adjust:100%;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-right:0 !important;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-top:0 !important;}[data-vms-version="1"] [class~=hide_object],[data-vms-version="1"] [class~=object]{position:absolute;}[data-vms-version="1"] [class~=object--mobile][data-devices-mode="mobile"],[data-vms-version="1"] [class~=object--mobile][data-devices-mode="both"]{display:block;}[data-vms-version="1"] [class~=object][data-type="shape"][class~=object--mobile],[data-vms-version="1"] .object[data-type="text"].object--mobile .editor .float,[data-vms-version="1"] [class~=object--mobile][data-devices-mode="desktop"]{display:none;}[data-vms-version="1"] [class~=object][data-type="text"]{background:rgba(255,255,255,0);}[data-vms-version="1"] [class~=object][data-type="text"]{-webkit-touch-callout:auto;}[data-vms-version="1"] [class~=object][data-type="text"]{-webkit-user-select:auto;}[data-vms-version="1"] [class~=hide_object]{left:-624.9375pc;}[data-vms-version="1"] [class~=object][data-type="text"]{-khtml-user-select:auto;}[data-vms-version="1"] [class~=object][data-type="text"]{-moz-user-select:auto;}[data-vms-version="1"] [class~=object],[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile] [class~=content]{left:0pc;}[data-vms-version="1"] [class~=object][data-type="text"]{-ms-user-select:auto;}[data-vms-version="1"] [class~=object][data-type="text"]{user-select:auto;}[data-vms-version="1"].body--inited [data-fullscreen_slider-index]{opacity:1;}[data-vms-version="1"][class~=body--inited] [data-button-junior]{opacity:inherit;}[data-vms-version="1"] [class~=hide_object]{top:-104.15625in;}[data-vms-version="1"] [class~=object][data-type="text"] [class~=content]{overflow:visible;}[data-vms-version="1"] [class~=hide_object]{overflow:hidden;}[data-vms-version="1"] [class~=object][data-type="before_after"] [class~=before_after],[data-vms-version="1"] [class~=object][data-type="text"] [class~=editor],[data-vms-version="1"] .object[data-type="before_after"] .before_after__scene{width:100%;}[data-vms-version="1"] [class~=hide_object],[data-vms-version="1"][data-vms-client="buro247"].body [data-scroll-effects="true"]{visibility:hidden;}[data-vms-version="1"] [class~=object],[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile] [class~=content]{top:0in;}[data-vms-version="1"] [class~=object]{z-index:10;}[data-vms-version="1"] .object[data-type="before_after"] .before_after__scene,[data-vms-version="1"] [class~=object][data-type="before_after"] [class~=before_after]{height:100%;}[data-vms-version="1"] [class~=object][data-type="before_after"] [class~=before_after]{position:relative;}[data-vms-version="1"] .object--mobile{position:relative !important;}[data-vms-version="1"] .object--mobile{top:auto !important;}[data-vms-version="1"] .object--mobile{left:auto !important;}[data-vms-version="1"] [class~=object][data-type="text"][class~=object--mobile] h1,[data-vms-version="1"] [class~=object][data-type="text"][class~=object--mobile] p,[data-vms-version="1"] [class~=object][data-type="text"][class~=object--mobile] span{word-break:break-word;}[data-vms-version="1"] .object--mobile{width:100% !important;}[data-vms-version="1"] .object--mobile{margin-bottom:20px;}[data-vms-version="1"] .object--mobile{padding-left:0;}[data-vms-version="1"] .object[data-type="before_after"] .before_after__scene{background:#eee;}[data-vms-version="1"] .object--mobile{padding-bottom:0;}[data-vms-version="1"] .object--mobile{padding-right:0;}[data-vms-version="1"] .object--mobile{padding-top:0;}[data-vms-version="1"] [data-button-junior],[data-vms-version="1"] [data-fullscreen_slider-index]{opacity:0;}[data-vms-version="1"][data-vms-client="buro247"][class~=body--loaded2] [data-scroll-effects="true"]{visibility:visible;}settings{display:none !important;}',
-		head = document.head || document.getElementsByTagName('head')[0],
-		style = document.createElement('style');
+/**
+ * Append critical CSS to the document head
+ */
+function appendCriticalCss() {
+  var critical_css = '[data-vms-version="1"] [class~=object][data-type="background"],[data-vms-version="1"] [class~=object] [class~=data],[data-vms-version="1"].body--desktop [data-devices-mode="mobile"],[data-vms-version="1"] [class~=object][data-type="embed"] xmp{display:none;}.vms_article_parent.article_background-size--cover{background-size:cover;}[data-vms-version="1"] [class~=object][data-type="colorchanger"]{pointer-events:none !important;}[class~=vms_article_parent],[data-vms-version="1"] .object .content{position:relative;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{width:50%;}.vms_article_parent.article_background-size--cover{background-position:center center;}[data-type="slider"] [class~=slider] [class~=fotorama__arr],[data-vms-version="1"] [class~=object][data-type="ajpg"] [class~=content],[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link],[data-vms-version="1"] .object .content{height:100%;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link],[data-vms-version="1"] .object .content,[data-vms-version="1"] [class~=object][data-type="media"] [class~=content],[data-vms-version="1"] [class~=object][data-type="text"] [class~=content],[data-vms-version="1"] [class~=object][data-type="slider"] img,[class~=vms_article_parent],[data-vms-version="1"] [class~=object][data-type="image"] img,[data-vms-version="1"] .object[data-type="embed"] .content{width:100%;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{top:0;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link],[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile] [class~=content]{position:absolute;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link]{z-index:10;}[data-vms-version="1"],[class~=vms_article_parent]{margin-left:auto;}[data-vms-version="1"] [class~=object][data-type="slider"] img,[data-vms-version="1"] [class~=object][data-type="image"] img{display:block;}.vms_article_parent.article_background-size--tile{background-size:auto;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{background-image:none !important;}.vms_article_parent.article_background-size--tile{background-repeat:repeat;}[data-vms-version="1"] [class~=object][data-type="slider"] img,[data-vms-version="1"] [class~=object][data-type="image"] img{font-size:0;}[data-type="slider"] [class~=slider] [class~=fotorama__arr]{opacity:1 !important;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link]{left:0in;}[data-vms-version="1"] [class~=object] [class~=content] [class~=content_link]{top:0pc;}.vms_article_parent.article_background-size--tile{background-position:center;}[class~=vms_article_parent]{margin-bottom:0pt;}[class~=vms_article_parent],[data-vms-version="1"]{margin-right:auto;}[data-vms-version="1"] .object--mobile[data-devices-mode="both"][data-type="text"] br{display:none !important;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"][class~=body--wide]{width:100% !important;}[data-vms-version="1"][class~=body--mobile]{padding-left:11.25pt !important;}[data-vms-version="1"][class~=body--mobile]{padding-bottom:11.25pt !important;}[data-vms-version="1"][class~=body--mobile]{padding-right:11.25pt !important;}[data-vms-version="1"] .object[data-type="embed"] .content,[data-vms-version="1"] .object .content{z-index:2;}[class~=vms_article_parent]{margin-top:0pt;}[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile]{height:0in !important;}[class~=vms_article_parent]{z-index:1;}[data-vms-version="1"][class~=body--mobile]{padding-top:11.25pt !important;}[data-vms-version="1"] .object .content,[class~=vms_article_parent]{overflow:hidden;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"] [class~=object][data-type="text"],[data-vms-version="1"] .object .content{-webkit-box-sizing:border-box;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"] [class~=object][data-type="text"],[data-vms-version="1"] .object .content{-moz-box-sizing:border-box;}[data-vms-version="1"] [class~=object][data-type="text"] [class~=content],[data-vms-version="1"] .object[data-type="embed"] .content,[data-vms-version="1"] [class~=object][data-type="media"] [class~=content],[data-vms-version="1"] [class~=object][data-type="text"] [class~=editor]{height:100%;}[data-vms-version="1"],[data-vms-version="1"] .object[data-type="embed"] .content{position:relative;}[data-vms-version="1"][class~=body--mobile]{margin-left:0 !important;}[data-vms-version="1"][class~=body--mobile]{margin-bottom:0 !important;}[data-vms-version="1"] .object .content,[data-vms-version="1"] [class~=object][data-type="text"],[data-vms-version="1"][class~=body--mobile]{box-sizing:border-box;}[data-vms-version="1"][class~=body--mobile]{margin-right:0 !important;}[data-vms-version="1"] [class~=object][class~=hide]{opacity:0;}[data-vms-version="1"][class~=body--mobile]{margin-top:0 !important;}[data-vms-version="1"][class~=body--mobile],[data-vms-version="1"] [class~=object--mobile]:not([data-type="button"]){height:auto !important;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-left:0 !important;}[data-vms-version="1"]{margin-bottom:0;}[data-vms-version="1"] [class~=object][data-type="shape"] [class~=content]{background:#000;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-bottom:0 !important;}[data-vms-version="1"]{margin-top:0;}[data-vms-version="1"]{-webkit-text-size-adjust:100%;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-right:0 !important;}[data-vms-version="1"] [class~=object--mobile] [class~=content]{padding-top:0 !important;}[data-vms-version="1"] [class~=hide_object],[data-vms-version="1"] [class~=object]{position:absolute;}[data-vms-version="1"] [class~=object--mobile][data-devices-mode="mobile"],[data-vms-version="1"] [class~=object--mobile][data-devices-mode="both"]{display:block;}[data-vms-version="1"] [class~=object][data-type="shape"][class~=object--mobile],[data-vms-version="1"] .object[data-type="text"].object--mobile .editor .float,[data-vms-version="1"] [class~=object--mobile][data-devices-mode="desktop"]{display:none;}[data-vms-version="1"] [class~=object][data-type="text"]{background:rgba(255,255,255,0);}[data-vms-version="1"] [class~=object][data-type="text"]{-webkit-touch-callout:auto;}[data-vms-version="1"] [class~=object][data-type="text"]{-webkit-user-select:auto;}[data-vms-version="1"] [class~=hide_object]{left:-624.9375pc;}[data-vms-version="1"] [class~=object][data-type="text"]{-khtml-user-select:auto;}[data-vms-version="1"] [class~=object][data-type="text"]{-moz-user-select:auto;}[data-vms-version="1"] [class~=object],[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile] [class~=content]{left:0pc;}[data-vms-version="1"] [class~=object][data-type="text"]{-ms-user-select:auto;}[data-vms-version="1"] [class~=object][data-type="text"]{user-select:auto;}[data-vms-version="1"].body--inited [data-fullscreen_slider-index]{opacity:1;}[data-vms-version="1"][class~=body--inited] [data-button-junior]{opacity:inherit;}[data-vms-version="1"] [class~=hide_object]{top:-104.15625in;}[data-vms-version="1"] [class~=object][data-type="text"] [class~=content]{overflow:visible;}[data-vms-version="1"] [class~=hide_object]{overflow:hidden;}[data-vms-version="1"] [class~=object][data-type="before_after"] [class~=before_after],[data-vms-version="1"] [class~=object][data-type="text"] [class~=editor],[data-vms-version="1"] .object[data-type="before_after"] .before_after__scene{width:100%;}[data-vms-version="1"] [class~=hide_object],[data-vms-version="1"][data-vms-client="buro247"].body [data-scroll-effects="true"]{visibility:hidden;}[data-vms-version="1"] [class~=object],[data-vms-version="1"] [class~=object][data-type="ajpg"][class~=object--mobile] [class~=content]{top:0in;}[data-vms-version="1"] [class~=object]{z-index:10;}[data-vms-version="1"] .object[data-type="before_after"] .before_after__scene,[data-vms-version="1"] [class~=object][data-type="before_after"] [class~=before_after]{height:100%;}[data-vms-version="1"] [class~=object][data-type="before_after"] [class~=before_after]{position:relative;}[data-vms-version="1"] .object--mobile{position:relative !important;}[data-vms-version="1"] .object--mobile{top:auto !important;}[data-vms-version="1"] .object--mobile{left:auto !important;}[data-vms-version="1"] [class~=object][data-type="text"][class~=object--mobile] h1,[data-vms-version="1"] [class~=object][data-type="text"][class~=object--mobile] p,[data-vms-version="1"] [class~=object][data-type="text"][class~=object--mobile] span{word-break:break-word;}[data-vms-version="1"] .object--mobile{width:100% !important;}[data-vms-version="1"] .object--mobile{margin-bottom:20px;}[data-vms-version="1"] .object--mobile{padding-left:0;}[data-vms-version="1"] .object[data-type="before_after"] .before_after__scene{background:#eee;}[data-vms-version="1"] .object--mobile{padding-bottom:0;}[data-vms-version="1"] .object--mobile{padding-right:0;}[data-vms-version="1"] .object--mobile{padding-top:0;}[data-vms-version="1"] [data-button-junior],[data-vms-version="1"] [data-fullscreen_slider-index]{opacity:0;}[data-vms-version="1"][data-vms-client="buro247"][class~=body--loaded2] [data-scroll-effects="true"]{visibility:visible;}settings{display:none !important;}',
+  head = document.head || document.getElementsByTagName('head')[0],
+  style = document.createElement('style');
 
-		style.type = 'text/css';
-		style.id = 'verstka-critical';
+  style.type = 'text/css';
+  style.id = 'verstka-critical';
 
-		if (style.styleSheet){
-		  style.styleSheet.cssText = critical_css;
-		} else {
-		  style.appendChild(document.createTextNode(critical_css));
-		}
-
-		head.appendChild(style);
-	};
-
-	appendCriticalCss();
-
-	var Collection = function( parameters ) {
-	    this.items = [];
-	    this.items_length = 0;
-
-	    this.setConstructor( parameters.constructor );
-	    this.setDestructor( parameters.destructor );
-	};
-
-	Collection.prototype.setConstructor = function( fn ) {
-	    this.constructor = fn || function() {};
-
-	    return this;
-	};
-
-	Collection.prototype.setDestructor = function( fn ) {
-	    this.destructor = fn || function() {};
-
-	    return this;
-	};
-
-	Collection.prototype.getLength = function() {
-	    return this.items_length;
-	};
-
-	Collection.prototype.getElements = function() {
-	    return this.items.map( function( item ) {
-	        return item.element;
-	    } );
-	};
-
-	Collection.prototype.each = function( iterator ) {
-	    var i,
-	        item;
-
-	    for ( i = 0; i < this.items_length; i++ ) {
-	        item = this.items[ i ];
-
-	        if ( iterator( item.element, item.data, i, this.items_length ) === false ) {
-	            break;
-	        }
-	    }
-
-	    return this;
-	};
-
-	Collection.prototype.index = function( element ) {
-	    var index = -1;
-
-	    this.each( function( current_element, data, i ) {
-	        if ( current_element === element ) {
-	            index = i;
-	            return false;
-	        }
-	    } );
-
-	    return index;
-	};
-
-	Collection.prototype.has = function( element ) {
-	    return this.index( element ) > -1;
-	};
-
-	Collection.prototype.add = function( element, options ) {
-	    var that = this;
-
-	    if ( this.has( element ) === false ) {
-	        this.items[ this.items_length++ ] = {
-	            element: element,
-	            data: that.constructor( element, options ),
-	            options: options
-	        };
-
-	        return true;
-	    } else {
-	        return false;
-	    }
-	};
-
-	Collection.prototype.remove = function( element ) {
-	    var index = this.index( element ),
-	        item;
-
-	    if ( index > -1 ) {
-
-	        item = this.items[ index ];
-
-	        this.destructor( item.element, item.data, item.options );
-
-	        this.items.splice( index, 1 );
-	        this.items_length--;
-
-	        return true;
-	    } else {
-	        return false;
-	    }
-	};
-
-	Collection.prototype._processFew = function( action_name, elements, options ) {
-	    var length = elements.length,
-	        i;
-
-	    for ( i = 0; i < length; i++ ) {
-	        this[ action_name ]( elements[ i ], options );
-	    }
-
-	    return this;
-	};
-
-	Collection.prototype.addFew = function( elements, options ) {
-	    return this._processFew( 'add', elements, options );
-	};
-
-	Collection.prototype.removeFew = function( elements ) {
-	    return this._processFew( 'remove', elements );
-	};
-
-	Collection.prototype.merge = function( selector, options ) {
-	    return this.addFew( document.querySelectorAll( selector ), options );
-	};
-
-	Collection.prototype.scatter = function( selector ) {
-	    return this.removeFew( document.querySelectorAll( selector ) );
-	};
-
-	Collection.prototype.clear = function() {
-	    return this.removeFew( this.getElements() );
-	};
-
-	Collection.prototype.filter = function( filter ) {
-	    var that = this;
-
-	    this.each( function( element, data, i, length ) {
-	        if ( filter( element, data, i, length ) !== true ) {
-	            that.remove( item.element );
-	        }
-	    } );
-
-	    return this;
-	};
-
-	Collection.prototype.refresh = function() {
-	    var elements = this.getElements();
-
-	    this.clear();
-	    this.addFew( elements );
-
-	    return this;
-	};
-
-	/**/
-
-  var resizeObserver = window.ResizeObserver ? new ResizeObserver(function () {
-    // console.log('resizeObserver: resize happened');
-    $(window).resize();
-  }) : null;
-
-  function observeResize($element) {
-    // console.log('resizeObserver: add', !!resizeObserver, $element.get(0));
-    resizeObserver && resizeObserver.observe($element.get(0));
+  if (style.styleSheet){
+    style.styleSheet.cssText = critical_css;
+  } else {
+    style.appendChild(document.createTextNode(critical_css));
   }
 
-	var domObserver = function ($element, callback) {
-		MutationObserver = window.MutationObserver || window.WebKitMutationObserver || function(callback) {
-			var mo = this,
-				id = Math.round( 299792458 * Math.random() );
+  head.appendChild(style);
+};
 
-			mo.observe = function() {
-				$element.on( 'DOMSubtreeModified.' + id, callback );
-			};
+function observeResize($element) {
+  resizeObserver && resizeObserver.observe($element.get(0));
+}
 
-			mo.disconnect = function() {
-				$element.off( 'DOMSubtreeModified.' + id );
-			};
+function unobserveResize($element) {
+  resizeObserver && resizeObserver.unobserve($element.get(0));
+}
 
-			mo.takeRecords = function() {
-			};
-		};
+function initResizeObserver() {
+  resizeObserver = window.ResizeObserver ? new ResizeObserver(function () {
+    $(window).resize();
+  }) : null;
+}
 
-		var observer = new MutationObserver(callback);
+/**
+ * Append critical CSS to the document head
+ * Initialize resize observer
+ * Check for SSR environment before appending
+ */
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  appendCriticalCss();
+  initResizeObserver();
+}
 
-		observer.observe($element.get(0), {
-			childList: true,
-			attributes: true,
-			subtree: true
-		} );
+var Collection = function( parameters ) {
+    this.items = [];
+    this.items_length = 0;
 
-		return observer;
-	};
-// })(window);
+    this.setConstructor( parameters.constructor );
+    this.setDestructor( parameters.destructor );
+};
+
+Collection.prototype.setConstructor = function( fn ) {
+    this.constructor = fn || function() {};
+
+    return this;
+};
+
+Collection.prototype.setDestructor = function( fn ) {
+    this.destructor = fn || function() {};
+
+    return this;
+};
+
+Collection.prototype.getLength = function() {
+    return this.items_length;
+};
+
+Collection.prototype.getElements = function() {
+    return this.items.map( function( item ) {
+        return item.element;
+    } );
+};
+
+Collection.prototype.each = function( iterator ) {
+    var i,
+        item;
+
+    for ( i = 0; i < this.items_length; i++ ) {
+        item = this.items[ i ];
+
+        if ( iterator( item.element, item.data, i, this.items_length ) === false ) {
+            break;
+        }
+    }
+
+    return this;
+};
+
+Collection.prototype.index = function( element ) {
+    var index = -1;
+
+    this.each( function( current_element, data, i ) {
+        if ( current_element === element ) {
+            index = i;
+            return false;
+        }
+    } );
+
+    return index;
+};
+
+Collection.prototype.has = function( element ) {
+    return this.index( element ) > -1;
+};
+
+Collection.prototype.add = function( element, options ) {
+    var that = this;
+
+    if ( this.has( element ) === false ) {
+        this.items[ this.items_length++ ] = {
+            element: element,
+            data: that.constructor( element, options ),
+            options: options
+        };
+
+        return true;
+    } else {
+        return false;
+    }
+};
+
+Collection.prototype.remove = function( element ) {
+    var index = this.index( element ),
+        item;
+
+    if ( index > -1 ) {
+
+        item = this.items[ index ];
+
+        this.destructor( item.element, item.data, item.options );
+
+        this.items.splice( index, 1 );
+        this.items_length--;
+
+        return true;
+    } else {
+        return false;
+    }
+};
+
+Collection.prototype._processFew = function( action_name, elements, options ) {
+    var length = elements.length,
+        i;
+
+    for ( i = 0; i < length; i++ ) {
+        this[ action_name ]( elements[ i ], options );
+    }
+
+    return this;
+};
+
+Collection.prototype.addFew = function( elements, options ) {
+    return this._processFew( 'add', elements, options );
+};
+
+Collection.prototype.removeFew = function( elements ) {
+    return this._processFew( 'remove', elements );
+};
+
+Collection.prototype.merge = function( selector, options ) {
+    return this.addFew( document.querySelectorAll( selector ), options );
+};
+
+Collection.prototype.scatter = function( selector ) {
+    return this.removeFew( document.querySelectorAll( selector ) );
+};
+
+Collection.prototype.clear = function() {
+    return this.removeFew( this.getElements() );
+};
+
+Collection.prototype.filter = function( filter ) {
+    var that = this;
+
+    this.each( function( element, data, i, length ) {
+        if ( filter( element, data, i, length ) !== true ) {
+            that.remove( item.element );
+        }
+    } );
+
+    return this;
+};
+
+Collection.prototype.refresh = function() {
+    var elements = this.getElements();
+
+    this.clear();
+    this.addFew( elements );
+
+    return this;
+};
 
 const VerstkaPlayer = new function() {
   var api = this,
@@ -543,12 +526,10 @@ const VerstkaPlayer = new function() {
       global_article_options = options;
 
       artciles_collection.merge( options.article_selector, options );
+      
       if (options.observe_selector && window.jQuery) {
         $(options.observe_selector).each(function () {
           observeResize($(this));
-          // domObserver($(this), function () {
-          // 	$(window).resize();
-          // });
         });
       }
 
