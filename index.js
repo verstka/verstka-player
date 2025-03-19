@@ -1,5 +1,11 @@
+/**
+ * Cache tag
+ */
 const CACHE_TAG = 'npm';
 
+/**
+ * Resize observer
+ */
 let resizeObserver = null;
 
 /**
@@ -20,16 +26,27 @@ function appendCriticalCss() {
   }
 
   head.appendChild(style);
-};
+}
 
+/**
+ * Observe resize
+ * @param {*} $element 
+ */
 function observeResize($element) {
   resizeObserver && resizeObserver.observe($element.get(0));
 }
 
+/**
+ * Unobserve resize
+ * @param {*} $element 
+ */
 function unobserveResize($element) {
   resizeObserver && resizeObserver.unobserve($element.get(0));
 }
 
+/**
+ * Initialize resize observer
+ */
 function initResizeObserver() {
   resizeObserver = window.ResizeObserver ? new ResizeObserver(function () {
     $(window).resize();
@@ -37,16 +54,10 @@ function initResizeObserver() {
 }
 
 /**
- * Append critical CSS to the document head
- * Initialize resize observer
- * Check for SSR environment before appending
+ * Collection
+ * @param {*} parameters 
  */
-if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  appendCriticalCss();
-  initResizeObserver();
-}
-
-var Collection = function( parameters ) {
+const Collection = function( parameters ) {
     this.items = [];
     this.items_length = 0;
 
@@ -308,10 +319,6 @@ const VerstkaPlayer = new function() {
     };
   };
 
-  function getArticleByElement(element) {
-    return $(element).parents('[data-vms-client]');
-  }
-
   api.Article = new function() {
     var self = this,
       display_mode;
@@ -348,11 +355,6 @@ const VerstkaPlayer = new function() {
           $(window).resize();
           params.callback && params.callback();
         });
-
-      // setTimeout(function() {
-      //   $(window).resize();
-      //   params.callback && params.callback();
-      // }, duration + 10);
     };
 
     self.slideReset = function(params) {
@@ -456,7 +458,7 @@ const VerstkaPlayer = new function() {
       };
     };
 
-    var articleConstructor = function( article_element ) {
+    var articleConstructor = function( article_element, options ) {
       var result = {},
         used;
 
@@ -472,13 +474,21 @@ const VerstkaPlayer = new function() {
         }
       } );
 
+      // Observe elements that might affect article position
+      if (options && options.observe_selector && window.jQuery) {
+        result.observed_elements = $(options.observe_selector);
+        result.observed_elements.each(function() {
+          observeResize($(this));
+        });
+      }
+
       result.version = used.version;
       result.client = used.client;
 
       return result;
     };
 
-    var articleDestructor = function( article_element, data ) {
+    var articleDestructor = function( article_element, data, options ) {
       useArticle( article_element, function( view ) {
         if ( view !== null ) {
           view.whenInit( function() {
@@ -491,6 +501,13 @@ const VerstkaPlayer = new function() {
           console.warn( 'VMS API -> Article.disable: couldn\'t find view of version "%s" for client "%s"', version, client );
         }
       } );
+      
+      // Unobserve elements that were being observed
+      if (data && data.observed_elements) {
+        data.observed_elements.each(function() {
+          unobserveResize($(this));
+        });
+      }
     };
 
     artciles_collection = new Collection( {
@@ -527,12 +544,6 @@ const VerstkaPlayer = new function() {
 
       artciles_collection.merge( options.article_selector, options );
       
-      if (options.observe_selector && window.jQuery) {
-        $(options.observe_selector).each(function () {
-          observeResize($(this));
-        });
-      }
-
       self.init_options = options;
     };
 
@@ -559,10 +570,19 @@ const VerstkaPlayer = new function() {
       window.VMS_API = api;
     });
   };
-
-  api.init();
 };
 
-
+/**
+ * Append critical CSS to the document head
+ * Initialize resize observer
+ * Initialize VerstkaPlayer
+ * Check for SSR environment before appending
+ */
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  appendCriticalCss();
+  initResizeObserver();
+  
+  VerstkaPlayer.init();
+}
 
 export default VerstkaPlayer;
