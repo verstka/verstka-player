@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted } from 'vue'
 import verstkaPlayer from 'verstka-player';
 import posts from '../posts'
 import { usePostTracking } from '../composables/usePostTracking';

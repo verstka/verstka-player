@@ -22,73 +22,78 @@ interface JQueryPromise<T> {
   done(callback: (...args: any[]) => any): JQueryPromise<T>;
 }
 
-declare const VerstkaPlayer: {
+declare namespace VerstkaPlayer {
   /**
    * Include external JavaScript
    */
-  includeScript(src: string, callback: () => void): void;
+  function includeScript(src: string, callback: () => void): void;
 
   /**
    * Include external CSS
    */
-  includeStyle(src: string, callback: () => void): void;
+  function includeStyle(src: string, callback: () => void): void;
+
+  /**
+   * Indicates if VerstkaPlayer is ready
+   */
+  const is_ready: boolean;
+
+  /**
+   * Initialize the VerstkaPlayer
+   */
+  function init(): void;
 
   /**
    * View management
    */
-  View: {
-    items: Record<string, any>;
-    formViewKey(v: string, c: string): string;
-    add(v: string, c: string, content: any): void;
-    get(v: string, c: string): any;
-    use(version: string, client: string, callback: (view: any) => void): void;
-  };
+  namespace View {
+    const items: Record<string, any>;
+    function formViewKey(v: string, c: string): string;
+    function add(v: string, c: string, content: any): void;
+    function get(v: string, c: string): any;
+    function use(version: string, client: string, callback: (view: any) => void): void;
+  }
 
   /**
    * Article management
    */
-  Article: {
-    slideDown(params: {
+  namespace Article {
+    function slideDown(params: {
       element: HTMLElement | JQuery;
       height: number;
       duration?: number;
       callback?: () => void;
     }): void;
     
-    slideReset(params: {
+    function slideReset(params: {
       duration?: number;
       callback?: () => void;
     }): void;
     
-    resizeObject(params: {
+    function resizeObject(params: {
       element: HTMLElement | JQuery;
       height: number;
       duration?: number;
       callback?: () => void;
     }): void;
     
-    changeDisplayMode(mode_name: string): void;
-    clearCache(): void;
+    function changeDisplayMode(mode_name: string): void;
+    function clearCache(): void;
     
-    enable(options?: {
+    function enable(options?: {
       article_selector?: string;
       observe_selector?: string;
       [key: string]: any;
     }): void;
     
-    refresh(): void;
-    disable(): void;
-  };
+    function refresh(): void;
+    function disable(): void;
+  }
+}
 
-  /**
-   * Initialize the VerstkaPlayer
-   */
-  init(): void;
+declare global {
+  const VerstkaPlayer: typeof VerstkaPlayer;
+}
 
-  /**
-   * Indicates if VerstkaPlayer is ready
-   */
-  is_ready: boolean;
-};
-
-export default VerstkaPlayer;
+export = VerstkaPlayer;
+export as namespace VerstkaPlayer;
