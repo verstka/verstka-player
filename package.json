@@ -1,9 +1,28 @@
 {
   "name": "verstka-player",
-  "version": "0.0.17",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Library for displaying Verstka articles",
   "main": "index.js",
   "types": "index.d.ts",
-  "author": "",
-  "license": "MIT"
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "verstka",
+    "player",
+    "article"
+  ],
+  "author": "Verstka",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/verstka/verstka-player.git"
+  },
+  "homepage": "https://github.com/verstka/verstka-player#readme"
 }
