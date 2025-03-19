@@ -1,6 +1,6 @@
 {
   "name": "verstka-player",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Library for displaying Verstka articles",
   "main": "index.js",
   "types": "index.d.ts",
@@ -8,6 +8,7 @@
     "index.js",
     "index.d.ts",
     "LICENSE",
+    "tsconfig.json",
     "README.md"
   ],
   "scripts": {

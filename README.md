@@ -1,12 +1,19 @@
 # verstka-player
 
-## Отображение статей
-Вставьте HTML-код статьи в любой контейнер и вызовите метод `enable()`:
+## Article Display
+
+Insert the HTML code of the article into any container and call the `enable()` method:
 ```js
 import verstkaPlayer from 'verstka-player'
 
 verstkaPlayer.Article.enable()
 ```
 
-### Возможные параметры
-* `observe_selector` – селекторы DOM-элементов, которые потенциально могут изменить положение статьи. Например, здесь указывается селектор баннера, расхлапывающегося над статьей.
+## Possible options
+* `observe_selector` – selectors of DOM elements that could potentially change the position of the article. For example, here you specify the selector of a banner that expands above the article.
+
+```js
+verstkaPlayer.Article.enable({
+  observe_selector: '.banner, .header-ad, .expandable-promo'
+})
+```
