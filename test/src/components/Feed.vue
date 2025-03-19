@@ -12,19 +12,18 @@ const { initTracking } = usePostTracking({
   posts
 });
 
-let cleanup: (() => void) | undefined;
-
 onMounted(() => {
+  /**
+   * Initialize post tracking for scroll-based visibility detection
+   */
+  initTracking();
+
+  /**
+   * Enable Verstka Player
+   */
   verstkaPlayer.Article.enable();
-
-  const tracking = initTracking();
-  cleanup = tracking?.cleanup;
 });
 
-onUnmounted(() => {
-  // Clean up event listeners when component is unmounted
-  cleanup?.();
-});
 </script>
 
 <template>

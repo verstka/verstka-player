@@ -1,24 +1,34 @@
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 /**
  * Composable for tracking visible posts and updating URL
  * @param options Configuration options
  * @returns Tracking state and methods
  */
-export function usePostTracking(options: {
-  posts: any[],
-  threshold?: number,
-  rootMargin?: string
-}) {
+export interface PostTrackingOptions {
+  /** Array of posts to track */
+  posts: any[];
+  /** Visibility threshold (0-1) */
+  threshold?: number;
+  /** Observer root margin */
+  rootMargin?: string;
+}
+
+/**
+ * Composable for tracking visible posts and updating URL
+ * @param options Configuration options
+ * @returns Tracking state and methods
+ */
+export function usePostTracking(options: PostTrackingOptions) {
   const visiblePostIndex = ref(0);
-  const { posts, threshold = 0.5, rootMargin = '0px' } = options;
+  const { posts } = options;
 
   /**
-   * Initialize post tracking with Intersection Observer
+   * Initialize post tracking with visibility calculations
+   * @returns Cleanup function to remove event listeners
    */
   const initTracking = () => {
     let feedItems: Element[] = [];
-    let visibilityRatios: Record<number, number> = {};
     
     /**
      * Calculate which post has the highest visibility in viewport
@@ -38,9 +48,6 @@ export function usePostTracking(options: {
         const visibleHeight = Math.max(0, visibleBottom - visibleTop);
         const visibleArea = visibleHeight * rect.width;
         
-        // Track visibility ratio for each item
-        visibilityRatios[index] = visibleArea;
-        
         // Find the most visible item
         if (visibleArea > maxVisibleArea) {
           maxVisibleArea = visibleArea;
@@ -58,37 +65,39 @@ export function usePostTracking(options: {
       }
     };
     
-    // Setup scroll event listener to continuously check visibility
-    window.addEventListener('scroll', updateMostVisiblePost, { passive: true });
-    window.addEventListener('resize', updateMostVisiblePost, { passive: true });
+    // Setup optimized event listeners
+    const scrollHandler = () => window.requestAnimationFrame(updateMostVisiblePost);
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+    window.addEventListener('resize', scrollHandler, { passive: true });
     
     // Initialize feed items
-    setTimeout(() => {
+    const initializeFeedItems = () => {
       feedItems = Array.from(document.querySelectorAll('.feed-item'));
       feedItems.forEach((item, index) => {
         item.setAttribute('data-post-index', index.toString());
       });
       updateMostVisiblePost();
-    }, 100);
+    };
     
-    // Check if URL already has a post param and scroll to it
-    const urlParams = new URLSearchParams(window.location.search);
-    const postParam = urlParams.get('post');
-    if (postParam) {
-      const index = parseInt(postParam) - 1;
-      if (index >= 0 && index < posts.length) {
-        visiblePostIndex.value = index;
-        // Scroll to the specified post
-        setTimeout(() => {
-          document.querySelectorAll('.feed-item')[index]?.scrollIntoView({ behavior: 'smooth' });
-        }, 200);
+    // Use requestAnimationFrame for initialization to ensure DOM is ready
+    requestAnimationFrame(() => {
+      initializeFeedItems();
+      
+      // Check if URL already has a post param
+      const urlParams = new URLSearchParams(window.location.search);
+      const postParam = urlParams.get('post');
+      if (postParam) {
+        const index = parseInt(postParam) - 1;
+        if (index >= 0 && index < posts.length) {
+          visiblePostIndex.value = index;
+        }
       }
-    }
+    });
     
     return {
       cleanup: () => {
-        window.removeEventListener('scroll', updateMostVisiblePost);
-        window.removeEventListener('resize', updateMostVisiblePost);
+        window.removeEventListener('scroll', scrollHandler);
+        window.removeEventListener('resize', scrollHandler);
       }
     };
   };
