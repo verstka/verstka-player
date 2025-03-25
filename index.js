@@ -214,7 +214,17 @@ const VerstkaPlayer = new function() {
     dev_version_str = 'dev.verstka.io',
     global_article_options;
 
+  /**
+   * Determines if the current environment is development
+   * Checks script sources for development domain
+   * Skips execution in SSR environment
+   */
   var is_dev = (function (str) {
+    // Skip execution in SSR environment
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return false;
+    }
+    
     var scripts = document.getElementsByTagName("script"),
         script,
         dev = false;
@@ -222,7 +232,7 @@ const VerstkaPlayer = new function() {
     for (var i = 0; i < scripts.length; ++i) {
       script = scripts[i].src;
 
-      if( script !== null && script.indexOf(str) !== -1){
+      if (script !== null && script.indexOf(str) !== -1) {
         dev = true;
       }
     }
